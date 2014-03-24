@@ -11,6 +11,7 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
 import tec.moviles.calcufy.jni.AritmeticaBasica;
+import tec.moviles.calcufy.jni.AritmeticaBasica.OPERACION;
 
 public class WCalculadora {
 
@@ -30,13 +31,7 @@ public class WCalculadora {
 	public final static String CHAR_DOT = ".";
 	public final static String CHAR_C = "C";
 	
-	public enum OPERACION{
-		SUMA, RESTA, MULTIPLICACION, DIVISION
-	}
-	
-	private double mOp1;
-	private double mOp2;
-	private OPERACION mOperacion = OPERACION.SUMA;
+
 	
 	private AritmeticaBasica mAritmetica;
 
@@ -65,8 +60,8 @@ public class WCalculadora {
 	public WCalculadora() {
 		
 		initialize();
-		clearValues();
 		mAritmetica = new AritmeticaBasica();
+		clearValues();
 	}
 	 
 	/**
@@ -79,33 +74,35 @@ public class WCalculadora {
 	}
 	
 	private void clearValues(){
-		mOp1 = 0;
-		mOp2 = 0;
+		mAritmetica.clear();
 		dataDisplay.setText("");
 	}
 	
 	private void saveOp1AndClear(){
-		mOp1 = Double.valueOf(dataDisplay.getText());
+		//Toma el valor del display, "0" para evitar error con entradas vacias.
+		mAritmetica.setOp1(Double.valueOf("0"+dataDisplay.getText()));
+		dataDisplay.setText("");
 	}
 	
 	private void saveOp2AndClear(){
-		mOp2 = Double.valueOf(dataDisplay.getText());
+		mAritmetica.setOp2(Double.valueOf("0"+dataDisplay.getText()));
+		dataDisplay.setText("");
 	}
 	
 	private void solveOperation(){
 		double result = 0;
-		switch (mOperacion){
+		switch (mAritmetica.getOperacion()){
 		case SUMA:
-			result = mAritmetica.sumar(mOp1, mOp2);
+			result = mAritmetica.sumar(mAritmetica.getOp1(), mAritmetica.getOp2());
 			break;
 		case RESTA:
-			result = mAritmetica.restar(mOp1, mOp2);
+			result = mAritmetica.restar(mAritmetica.getOp1(), mAritmetica.getOp2());
 			break;
 		case MULTIPLICACION:
-			result = mAritmetica.multiplicar(mOp1, mOp2);
+			result = mAritmetica.multiplicar(mAritmetica.getOp1(), mAritmetica.getOp2());
 			break;
 		case DIVISION:
-			result = mAritmetica.dividir(mOp1, mOp2);
+			result = mAritmetica.dividir(mAritmetica.getOp1(), mAritmetica.getOp2());
 			break;
 		}
 		dataDisplay.setText(Double.toString(result));
@@ -241,7 +238,7 @@ public class WCalculadora {
 		button_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				saveOp1AndClear();
-				mOperacion = OPERACION.DIVISION;
+				mAritmetica.setOperacion(OPERACION.DIVISION);
 			}
 		});
 		button_1.setBounds(285, 74, 50, 50);
@@ -251,7 +248,7 @@ public class WCalculadora {
 		button_11.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				saveOp1AndClear();
-				mOperacion = OPERACION.MULTIPLICACION;
+				mAritmetica.setOperacion(OPERACION.MULTIPLICACION);
 			}
 		});
 		button_11.setBounds(285, 136, 50, 50);
@@ -261,7 +258,7 @@ public class WCalculadora {
 		button_12.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				saveOp1AndClear();
-				mOperacion = OPERACION.RESTA;
+				mAritmetica.setOperacion(OPERACION.RESTA);
 			}
 		});
 		button_12.setBounds(285, 198, 50, 50);
@@ -271,7 +268,7 @@ public class WCalculadora {
 		button_13.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				saveOp1AndClear();
-				mOperacion = OPERACION.SUMA;
+				mAritmetica.setOperacion(OPERACION.SUMA);
 			}
 		});
 		button_13.setBounds(285, 260, 50, 50);
