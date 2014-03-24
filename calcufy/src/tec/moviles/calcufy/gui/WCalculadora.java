@@ -10,6 +10,8 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
+import tec.moviles.calcufy.jni.AritmeticaBasica;
+
 public class WCalculadora {
 
 	private JFrame frame;
@@ -27,6 +29,17 @@ public class WCalculadora {
 	public final static String CHAR_9 = "9";
 	public final static String CHAR_DOT = ".";
 	public final static String CHAR_C = "C";
+	
+	public enum OPERACION{
+		SUMA, RESTA, MULTIPLICACION, DIVISION
+	}
+	
+	private double mOp1;
+	private double mOp2;
+	private OPERACION mOperacion = OPERACION.SUMA;
+	
+	private AritmeticaBasica mAritmetica;
+
 	
 	
 
@@ -50,9 +63,12 @@ public class WCalculadora {
 	 * Create the application.
 	 */
 	public WCalculadora() {
+		
 		initialize();
+		clearValues();
+		mAritmetica = new AritmeticaBasica();
 	}
-	
+	 
 	/**
 	 *  Agregar Texto con los botones
 	 */
@@ -62,6 +78,38 @@ public class WCalculadora {
 		dataDisplay.setText(actualText);
 	}
 	
+	private void clearValues(){
+		mOp1 = 0;
+		mOp2 = 0;
+		dataDisplay.setText("");
+	}
+	
+	private void saveOp1AndClear(){
+		mOp1 = Double.valueOf(dataDisplay.getText());
+	}
+	
+	private void saveOp2AndClear(){
+		mOp2 = Double.valueOf(dataDisplay.getText());
+	}
+	
+	private void solveOperation(){
+		double result = 0;
+		switch (mOperacion){
+		case SUMA:
+			result = mAritmetica.sumar(mOp1, mOp2);
+			break;
+		case RESTA:
+			result = mAritmetica.restar(mOp1, mOp2);
+			break;
+		case MULTIPLICACION:
+			result = mAritmetica.multiplicar(mOp1, mOp2);
+			break;
+		case DIVISION:
+			result = mAritmetica.dividir(mOp1, mOp2);
+			break;
+		}
+		dataDisplay.setText(Double.toString(result));
+	}
 
 	/**
 	 * Initialize the contents of the frame.
@@ -78,7 +126,7 @@ public class WCalculadora {
 		dataDisplay.setBorder(UIManager.getBorder("TextField.border"));
 		dataDisplay.setHorizontalAlignment(SwingConstants.RIGHT);
 		dataDisplay.setText("0");
-		dataDisplay.setBounds(32, 12, 303, 50);
+		dataDisplay.setBounds(32, 12, 215, 50);
 		frame.getContentPane().add(dataDisplay);
 		
 		JButton btnNewButton = new JButton(CHAR_0);
@@ -100,10 +148,10 @@ public class WCalculadora {
 		frame.getContentPane().add(button);
 		
 		JButton btnAc = new JButton(CHAR_C);
-		btnAc.setBounds(197, 260, 50, 50);
+		btnAc.setBounds(285, 12, 50, 50);
 		btnAc.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				 addSymbolToDisplay(CHAR_C);
+				 clearValues();
 			}
 		});
 		frame.getContentPane().add(btnAc);
@@ -192,27 +240,52 @@ public class WCalculadora {
 		JButton button_1 = new JButton("/");
 		button_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				saveOp1AndClear();
+				mOperacion = OPERACION.DIVISION;
 			}
 		});
 		button_1.setBounds(285, 74, 50, 50);
 		frame.getContentPane().add(button_1);
 		
 		JButton button_11 = new JButton("X");
+		button_11.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				saveOp1AndClear();
+				mOperacion = OPERACION.MULTIPLICACION;
+			}
+		});
 		button_11.setBounds(285, 136, 50, 50);
 		frame.getContentPane().add(button_11);
 		
 		JButton button_12 = new JButton("-");
+		button_12.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				saveOp1AndClear();
+				mOperacion = OPERACION.RESTA;
+			}
+		});
 		button_12.setBounds(285, 198, 50, 50);
 		frame.getContentPane().add(button_12);
 		
 		JButton button_13 = new JButton("+");
 		button_13.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				saveOp1AndClear();
+				mOperacion = OPERACION.SUMA;
 			}
 		});
 		button_13.setBounds(285, 260, 50, 50);
 		frame.getContentPane().add(button_13);
+		
+		JButton button_14 = new JButton("=");
+		button_14.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				saveOp2AndClear();
+				solveOperation();
+			}
+		});
+		button_14.setBounds(197, 260, 50, 50);
+		frame.getContentPane().add(button_14);
 		
 
 	}
